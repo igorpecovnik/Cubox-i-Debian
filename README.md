@@ -1,6 +1,8 @@
 Cubox-Debian
 ============
 
+<img src="http://www.igorpecovnik.com/wp-content/uploads/2014/08/cubox-login.png" alt="cubox-login" width="640" height="412">
+
 Scripts to create an Image of Debian or only kernel for Cubox-i and Hummingboard
 
 Images, manual and history:
