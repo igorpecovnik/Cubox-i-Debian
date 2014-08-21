@@ -7,7 +7,7 @@
 #
 
 RELEASE="wheezy"                                   # jessie(currently broken) or wheezy
-VERSION="Cubox Debian 1.0 $RELEASE"                # just name
+VERSION="Cubox Debian 1.1 $RELEASE"                # just name
 SOURCE_COMPILE="yes"                               # yes / no
 DEST_LANG="en_US.UTF-8"                            # sl_SI.UTF-8, en_US.UTF-8
 TZDATA="Europe/Ljubljana"                          # Timezone
@@ -44,7 +44,7 @@ echo "Building $VERSION."
 # Downloading necessary files
 #--------------------------------------------------------------------------------
 echo "Downloading necessary files."
-apt-get -qq -y install lzop zip binfmt-support bison build-essential ccache debootstrap flex gawk gcc-arm-linux-gnueabi gcc-arm-linux-gnueabihf lvm2 qemu-user-static texinfo texlive u-boot-tools uuid-dev zlib1g-dev unzip libncurses5-dev pkg-config libusb-1.0-0-dev parted
+#apt-get -qq -y install lzop zip binfmt-support bison build-essential ccache debootstrap flex gawk gcc-arm-linux-gnueabi gcc-arm-linux-gnueabihf lvm2 qemu-user-static texinfo texlive u-boot-tools uuid-dev zlib1g-dev unzip libncurses5-dev pkg-config libusb-1.0-0-dev parted
 
 #--------------------------------------------------------------------------------
 # Preparing output / destination files
@@ -108,6 +108,7 @@ make $CTHREADS CROSS_COMPILE=arm-linux-gnueabihf-
 # kernel image next
 rm -rf $DEST/linux-cubox-next/output
 cd $DEST/linux-cubox-next
+tar xvfz $SRC/bin/wifi-firmware.tgz
 make CROSS_COMPILE=arm-linux-gnueabihf- clean
 cp $SRC/config/kernel.config.next $DEST/linux-cubox-next/.config
 #make $CTHREADS ARCH=arm CROSS_COMPILE=arm-linux-gnueabihf- imx_v7_cbi_hb_base_defconfig # default config
@@ -373,6 +374,7 @@ cat <<EOT >> $DEST/output/sdcard/etc/network/interfaces
 auto eth0
 allow-hotplug eth0
 iface eth0 inet dhcp
+hwaddress ether # comment this if you want to have MAC from chip
 #auto wlan0
 #allow-hotplug wlan0
 #iface wlan0 inet dhcp
@@ -395,7 +397,7 @@ iface wlan0 inet manual
 
 iface br0 inet dhcp
 bridge_ports eth0 wlan0
-hwaddress ether # will be added at first boot
+hwaddress ether # comment this if you want to have MAC from chip
 EOT
 
 # add noatime to root FS
