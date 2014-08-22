@@ -112,7 +112,7 @@ tar xvfz $SRC/bin/wifi-firmware.tgz
 make CROSS_COMPILE=arm-linux-gnueabihf- clean
 cp $SRC/config/kernel.config.next $DEST/linux-cubox-next/.config
 #make $CTHREADS ARCH=arm CROSS_COMPILE=arm-linux-gnueabihf- imx_v7_cbi_hb_base_defconfig # default config
-make $CTHREADS ARCH=arm CROSS_COMPILE=arm-linux-gnueabihf- zImage modules imx6q-cubox-i.dtb imx6dl-cubox-i.dtb imx6dl-hummingboard.dtb
+make $CTHREADS ARCH=arm CROSS_COMPILE=arm-linux-gnueabihf- zImage modules imx6q-cubox-i.dtb imx6dl-cubox-i.dtb imx6dl-hummingboard.dtb imx6q-hummingboard.dtb
 make $CTHREADS ARCH=arm CROSS_COMPILE=arm-linux-gnueabihf- INSTALL_MOD_PATH=output modules_install
 make $CTHREADS ARCH=arm CROSS_COMPILE=arm-linux-gnueabihf- INSTALL_HDR_PATH=output/usr headers_install
 cp $DEST/linux-cubox-next/Module.symvers $DEST/linux-cubox-next/output/usr/include
