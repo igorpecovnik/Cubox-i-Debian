@@ -1,4 +1,4 @@
-Cubox-Debian
+Cubox-i-Debian
 ============
 
 <img src="http://www.igorpecovnik.com/wp-content/uploads/2014/08/cubox-login.png" alt="cubox-login" width="640" height="412">
@@ -18,8 +18,8 @@ Installation steps
 ```shell
 sudo apt-get -y install git
 cd ~
-git clone https://github.com/igorpecovnik/Cubox-Debian
-chmod +x ./Cubox-Debian/build.sh
-cd ./Cubox-Debian
+git clone https://github.com/igorpecovnik/Cubox-i-Debian
+chmod +x ./Cubox-i-Debian/build.sh
+cd ./Cubox-i-Debian
 sudo ./build.sh
 ```
