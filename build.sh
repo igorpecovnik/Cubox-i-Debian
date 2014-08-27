@@ -7,7 +7,7 @@
 #
 
 RELEASE="wheezy"                                   # jessie(currently broken) or wheezy
-VERSION="Cubox Debian 1.1 $RELEASE"                # just name
+VERSION="Cubox Debian 1.3 $RELEASE"                # just name
 SOURCE_COMPILE="yes"                               # yes / no
 DEST_LANG="en_US.UTF-8"                            # sl_SI.UTF-8, en_US.UTF-8
 TZDATA="Europe/Ljubljana"                          # Timezone
@@ -60,12 +60,12 @@ else
    git clone https://github.com/SolidRun/u-boot-imx6 $DEST/u-boot-cubox 
 fi
 
-#if [ -d "$DEST/linux-cubox" ]
-#then
-#	cd $DEST/linux-cubox; git pull -f; cd $SRC
-#else
-#	git clone https://github.com/SolidRun/linux-imx6 $DEST/linux-cubox              # Stable kernel source
-#fi
+if [ -d "$DEST/linux-cubox" ]
+then
+	cd $DEST/linux-cubox; git pull -f; cd $SRC
+else
+	git clone https://github.com/SolidRun/linux-imx6 $DEST/linux-cubox              # Stable kernel source
+fi
 
 if [ -d "$DEST/linux-cubox-next" ]
 then
@@ -88,6 +88,9 @@ if [ "$SOURCE_COMPILE" = "yes" ]; then
 # Compiling everything
 #--------------------------------------------------------------------------------
 
+# clean output
+rm -rf $DEST/linux-cubox/output
+
 # boot loader
 echo "------ Compiling universal boot loader"
 cd $DEST/u-boot-cubox
@@ -96,14 +99,14 @@ make $CTHREADS mx6_cubox-i_config CROSS_COMPILE=arm-linux-gnueabihf-
 make $CTHREADS CROSS_COMPILE=arm-linux-gnueabihf-
 
 # kernel image
-#rm -rf $DEST/linux-cubox/output
-#cd $DEST/linux-cubox
-#make CROSS_COMPILE=arm-linux-gnueabihf- clean
-#cp $SRC/config/kernel.config $DEST/linux-cubox/.config
-#make $CTHREADS ARCH=arm CROSS_COMPILE=arm-linux-gnueabihf- uImage modules LOCALVERSION="-cubox" 
-#make $CTHREADS ARCH=arm CROSS_COMPILE=arm-linux-gnueabihf- INSTALL_MOD_PATH=output modules_install
-#make $CTHREADS ARCH=arm CROSS_COMPILE=arm-linux-gnueabihf- INSTALL_HDR_PATH=output/usr headers_install
-#cp $DEST/linux-cubox-next/Module.symvers $DEST/linux-cubox-next/output/usr/include
+cd $DEST/linux-cubox
+make CROSS_COMPILE=arm-linux-gnueabihf- clean
+cp $SRC/config/kernel.config $DEST/linux-cubox/.config
+#make $CTHREADS ARCH=arm CROSS_COMPILE=arm-linux-gnueabihf- imx6_cubox-i_hummingboard_defconfig
+make $CTHREADS ARCH=arm CROSS_COMPILE=arm-linux-gnueabihf- uImage modules LOCALVERSION="-cubox" 
+make $CTHREADS ARCH=arm CROSS_COMPILE=arm-linux-gnueabihf- INSTALL_MOD_PATH=output modules_install
+make $CTHREADS ARCH=arm CROSS_COMPILE=arm-linux-gnueabihf- INSTALL_HDR_PATH=output/usr headers_install
+cp $DEST/linux-cubox-next/Module.symvers $DEST/linux-cubox-next/output/usr/include
 
 # kernel image next
 rm -rf $DEST/linux-cubox-next/output
@@ -112,7 +115,7 @@ tar xvfz $SRC/bin/wifi-firmware.tgz
 make CROSS_COMPILE=arm-linux-gnueabihf- clean
 cp $SRC/config/kernel.config.next $DEST/linux-cubox-next/.config
 #make $CTHREADS ARCH=arm CROSS_COMPILE=arm-linux-gnueabihf- imx_v7_cbi_hb_base_defconfig # default config
-make $CTHREADS ARCH=arm CROSS_COMPILE=arm-linux-gnueabihf- zImage modules imx6q-cubox-i.dtb imx6dl-cubox-i.dtb imx6dl-hummingboard.dtb imx6q-hummingboard.dtb
+make $CTHREADS ARCH=arm CROSS_COMPILE=arm-linux-gnueabihf- zImage modules imx6q-cubox-i.dtb imx6dl-cubox-i.dtb imx6dl-hummingboard.dtb imx6q-hummingboard.dtb LOCALVERSION="-cubox"
 make $CTHREADS ARCH=arm CROSS_COMPILE=arm-linux-gnueabihf- INSTALL_MOD_PATH=output modules_install
 make $CTHREADS ARCH=arm CROSS_COMPILE=arm-linux-gnueabihf- INSTALL_HDR_PATH=output/usr headers_install
 cp $DEST/linux-cubox-next/Module.symvers $DEST/linux-cubox-next/output/usr/include
@@ -127,10 +130,11 @@ fi
 rm -r $DEST/output/boot/
 mkdir -p $DEST/output/boot/
 # Current 
+#cp $SRC/config/kernel-switching.txt $DEST/output/boot/
 cp $SRC/config/uEnv.* $DEST/output/boot/
 cp $DEST/u-boot-cubox/u-boot.img $DEST/output/u-boot.img
 cp $DEST/u-boot-cubox/SPL $DEST/output/SPL
-#cp $SRC/output/linux-cubox/arch/arm/boot/zImage $DEST/output/boot/zImage
+#cp $SRC/output/linux-cubox/arch/arm/boot/uImage $DEST/output/boot/uImage
 cp $SRC/output/linux-cubox-next/arch/arm/boot/zImage $DEST/output/boot/zImage
 cp $DEST/linux-cubox-next/arch/arm/boot/dts/imx6*.dtb $DEST/output/boot/
 
@@ -279,13 +283,15 @@ cp $SRC/scripts/cubian-firstrun $DEST/output/sdcard/etc/init.d
 # script to install to NAND & SATA and kernel switchers
 cp $SRC/bin/ramlog_2.0.0_all.deb $DEST/output/sdcard/tmp
 
-# bluetooth device enabler 
-#cp $SRC/bin/brcm_patchram_plus $DEST/output/sdcard/usr/local/bin
-#chroot $DEST/output/sdcard /bin/bash -c "chmod +x /usr/local/bin/brcm_patchram_plus"
-#cp $SRC/scripts/brcm40183 $DEST/output/sdcard/etc/default
-#cp $SRC/scripts/brcm40183-patch $DEST/output/sdcard/etc/init.d
-#chroot $DEST/output/sdcard /bin/bash -c "chmod +x /etc/init.d/brcm40183-patch"
-#chroot $DEST/output/sdcard /bin/bash -c "update-rc.d brcm40183-patch defaults" 
+# bluetooth device enabler
+cd $DEST/output/sdcard/
+tar xvfz $SRC/bin/bt-firmware.tgz 
+cp $SRC/bin/brcm_patchram_plus $DEST/output/sdcard/usr/local/bin
+chroot $DEST/output/sdcard /bin/bash -c "chmod +x /usr/local/bin/brcm_patchram_plus"
+cp $SRC/scripts/brcm4330 $DEST/output/sdcard/etc/default
+cp $SRC/scripts/brcm4330-patch $DEST/output/sdcard/etc/init.d
+chroot $DEST/output/sdcard /bin/bash -c "chmod +x /etc/init.d/brcm4330-patch"
+chroot $DEST/output/sdcard /bin/bash -c "update-rc.d brcm4330-patch defaults" 
 
 # install custom bashrc
 cat $SRC/scripts/bashrc >> $DEST/output/sdcard/etc/bash.bashrc 
@@ -295,16 +301,16 @@ chroot $DEST/output/sdcard /bin/bash -c "chmod +x /etc/init.d/cubian-*"
 # and startable on boot
 chroot $DEST/output/sdcard /bin/bash -c "update-rc.d cubian-firstrun defaults" 
 echo "Installing aditional applications"
-chroot $DEST/output/sdcard /bin/bash -c "apt-get -qq -y install stress u-boot-tools makedev libfuse2 libc6 libnl-3-dev sysfsutils hddtemp bc figlet toilet screen hdparm libfuse2 ntfs-3g bash-completion lsof sudo git hostapd dosfstools htop openssh-server ca-certificates module-init-tools dhcp3-client udev ifupdown iproute iputils-ping ntp rsync usbutils pciutils wireless-tools wpasupplicant procps parted cpufrequtils unzip bridge-utils"
-# removed in 2.4 #chroot $DEST/output/sdcard /bin/bash -c "apt-get -qq -y install bluetooth libbluetooth3 libbluetooth-dev lirc alsa-utils console-setup console-data"
+chroot $DEST/output/sdcard /bin/bash -c "apt-get -qq -y install bluetooth libbluetooth3 libbluetooth-dev stress u-boot-tools makedev libfuse2 libc6 libnl-3-dev sysfsutils hddtemp bc figlet toilet screen hdparm libfuse2 ntfs-3g bash-completion lsof sudo git hostapd dosfstools htop openssh-server ca-certificates module-init-tools dhcp3-client udev ifupdown iproute iputils-ping ntp rsync usbutils pciutils wireless-tools wpasupplicant procps parted cpufrequtils unzip bridge-utils"
+# removed in 2.4 #chroot $DEST/output/sdcard /bin/bash -c "apt-get -qq -y install lirc alsa-utils console-setup console-data"
 chroot $DEST/output/sdcard /bin/bash -c "apt-get -y clean"
 
 # change dynamic motd
 ZAMENJAJ='echo "" > /var/run/motd.dynamic'
 ZAMENJAJ=$ZAMENJAJ"\n   if [ \$(cat /proc/meminfo | grep MemTotal | grep -o '[0-9]\\\+') -ge 1531749 ]; then"
-ZAMENJAJ=$ZAMENJAJ"\n           toilet -f standard -F metal  \"Cubox PRO\" >> /var/run/motd.dynamic"
+ZAMENJAJ=$ZAMENJAJ"\n           toilet -f standard -F metal  \"Cubox-i PRO\" >> /var/run/motd.dynamic"
 ZAMENJAJ=$ZAMENJAJ"\n   else"
-ZAMENJAJ=$ZAMENJAJ"\n           toilet -f standard -F metal  \"Cubox\" >> /var/run/motd.dynamic"
+ZAMENJAJ=$ZAMENJAJ"\n           toilet -f standard -F metal  \"Cubox-i\" >> /var/run/motd.dynamic"
 ZAMENJAJ=$ZAMENJAJ"\n   fi"
 ZAMENJAJ=$ZAMENJAJ"\n   echo \"\" >> /var/run/motd.dynamic"
 sed -e s,"# Update motd","$ZAMENJAJ",g 	-i $DEST/output/sdcard/etc/init.d/motd
