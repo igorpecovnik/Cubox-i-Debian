@@ -301,7 +301,7 @@ chroot $DEST/output/sdcard /bin/bash -c "chmod +x /etc/init.d/cubian-*"
 # and startable on boot
 chroot $DEST/output/sdcard /bin/bash -c "update-rc.d cubian-firstrun defaults" 
 echo "Installing aditional applications"
-chroot $DEST/output/sdcard /bin/bash -c "apt-get -qq -y install bluetooth libbluetooth3 libbluetooth-dev stress u-boot-tools makedev libfuse2 libc6 libnl-3-dev sysfsutils hddtemp bc figlet toilet screen hdparm libfuse2 ntfs-3g bash-completion lsof sudo git hostapd dosfstools htop openssh-server ca-certificates module-init-tools dhcp3-client udev ifupdown iproute iputils-ping ntp rsync usbutils pciutils wireless-tools wpasupplicant procps parted cpufrequtils unzip bridge-utils"
+chroot $DEST/output/sdcard /bin/bash -c "apt-get -qq -y install i2c-tools bluetooth libbluetooth3 libbluetooth-dev stress u-boot-tools makedev libfuse2 libc6 libnl-3-dev sysfsutils hddtemp bc figlet toilet screen hdparm libfuse2 ntfs-3g bash-completion lsof sudo git hostapd dosfstools htop openssh-server ca-certificates module-init-tools dhcp3-client udev ifupdown iproute iputils-ping ntp rsync usbutils pciutils wireless-tools wpasupplicant procps parted cpufrequtils unzip bridge-utils"
 # removed in 2.4 #chroot $DEST/output/sdcard /bin/bash -c "apt-get -qq -y install lirc alsa-utils console-setup console-data"
 chroot $DEST/output/sdcard /bin/bash -c "apt-get -y clean"
 
