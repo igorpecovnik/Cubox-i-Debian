@@ -60,12 +60,12 @@ else
    git clone https://github.com/SolidRun/u-boot-imx6 $DEST/u-boot-cubox 
 fi
 
-if [ -d "$DEST/linux-cubox" ]
-then
-	cd $DEST/linux-cubox; git pull -f; cd $SRC
-else
-	git clone https://github.com/SolidRun/linux-imx6 $DEST/linux-cubox              # Stable kernel source
-fi
+#if [ -d "$DEST/linux-cubox" ]
+#then
+#	cd $DEST/linux-cubox; git pull -f; cd $SRC
+#else
+#	git clone https://github.com/SolidRun/linux-imx6 $DEST/linux-cubox              # Stable kernel source
+#fi
 
 if [ -d "$DEST/linux-cubox-next" ]
 then
@@ -99,14 +99,14 @@ make $CTHREADS mx6_cubox-i_config CROSS_COMPILE=arm-linux-gnueabihf-
 make $CTHREADS CROSS_COMPILE=arm-linux-gnueabihf-
 
 # kernel image
-cd $DEST/linux-cubox
-make CROSS_COMPILE=arm-linux-gnueabihf- clean
-cp $SRC/config/kernel.config $DEST/linux-cubox/.config
+#cd $DEST/linux-cubox
+#make CROSS_COMPILE=arm-linux-gnueabihf- clean
+#cp $SRC/config/kernel.config $DEST/linux-cubox/.config
 #make $CTHREADS ARCH=arm CROSS_COMPILE=arm-linux-gnueabihf- imx6_cubox-i_hummingboard_defconfig
-make $CTHREADS ARCH=arm CROSS_COMPILE=arm-linux-gnueabihf- uImage modules LOCALVERSION="-cubox" 
-make $CTHREADS ARCH=arm CROSS_COMPILE=arm-linux-gnueabihf- INSTALL_MOD_PATH=output modules_install
-make $CTHREADS ARCH=arm CROSS_COMPILE=arm-linux-gnueabihf- INSTALL_HDR_PATH=output/usr headers_install
-cp $DEST/linux-cubox-next/Module.symvers $DEST/linux-cubox-next/output/usr/include
+#make $CTHREADS ARCH=arm CROSS_COMPILE=arm-linux-gnueabihf- uImage modules LOCALVERSION="-cubox" 
+#make $CTHREADS ARCH=arm CROSS_COMPILE=arm-linux-gnueabihf- INSTALL_MOD_PATH=output modules_install
+#make $CTHREADS ARCH=arm CROSS_COMPILE=arm-linux-gnueabihf- INSTALL_HDR_PATH=output/usr headers_install
+#cp $DEST/linux-cubox-next/Module.symvers $DEST/linux-cubox-next/output/usr/include
 
 # kernel image next
 rm -rf $DEST/linux-cubox-next/output
