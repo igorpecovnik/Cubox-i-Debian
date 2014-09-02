@@ -14,7 +14,7 @@ http://www.igorpecovnik.com/2014/08/19/cubox-i-hummingboard-debian-sd-image/
 
 Installation steps
 ------------------
-1. <a href=http://releases.ubuntu.com/14.04/>Download Ubuntu 14.04 LTS</a>
+1. <a href=http://releases.ubuntu.com/14.04/>Install Ubuntu 14.04 LTS</a> into your (virtual) PC
 2. Login as root and execute:
 
 ```shell
