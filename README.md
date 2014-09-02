@@ -14,6 +14,8 @@ http://www.igorpecovnik.com/2014/08/19/cubox-i-hummingboard-debian-sd-image/
 
 Installation steps
 ------------------
+1. <a href=http://releases.ubuntu.com/14.04/>Download Ubuntu 14.04 LTS</a>
+2. Login as root and execute:
 
 ```shell
 sudo apt-get -y install git
