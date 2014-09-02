@@ -127,7 +127,7 @@ fi
 # Creating boot directory for current and next kernel
 #--------------------------------------------------------------------------------
 # 
-rm -r $DEST/output/boot/
+rm -rf $DEST/output/boot/
 mkdir -p $DEST/output/boot/
 # Current 
 #cp $SRC/config/kernel-switching.txt $DEST/output/boot/
