@@ -71,7 +71,8 @@ if [ -d "$DEST/linux-cubox-next" ]
 then
 	cd $DEST/linux-cubox-next; git pull -f; cd $SRC
 else
-	git clone https://github.com/linux4kix/linux-linaro-stable-mx6 -b linux-linaro-lsk-v3.14-mx6 $DEST/linux-cubox-next              # Dev kernel source
+	# git clone https://github.com/linux4kix/linux-linaro-stable-mx6 -b linux-linaro-lsk-v3.14-mx6 $DEST/linux-cubox-next # Dev kernel source
+          git clone https://github.com/SolidRun/linux-imx6-3.14 $DEST/linux-cubox-next
 fi
 
 if [ "$SOURCE_COMPILE" = "yes" ]; then
