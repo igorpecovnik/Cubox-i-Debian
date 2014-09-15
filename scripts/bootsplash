@@ -10,5 +10,6 @@
 
 
 PATH=/sbin:/usr/sbin:/bin:/usr/bin
+#echo "Booting Debian for Cubox ..." >> /dev/tty0
+fbi -vt 1 -noverbose -d /dev/fb0 /etc/bootsplash.png
 
-echo "Booting Debian for Cubox ..." >> /dev/tty0

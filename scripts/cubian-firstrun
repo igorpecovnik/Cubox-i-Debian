@@ -56,6 +56,7 @@ case "$1" in
 			echo "Expanding rootfs has failed, see log files." 
 		fi
 		set -e
+                update-rc.d bootsplash defaults
 		/sbin/insserv -r cubian-firstrun
 		if $reboot;then
 			/sbin/reboot

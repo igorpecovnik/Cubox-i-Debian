@@ -7,7 +7,7 @@
 #
 
 RELEASE="wheezy"                                   # jessie(currently broken) or wheezy
-VERSION="Cubox Debian 1.3 $RELEASE"                # just name
+VERSION="Cubox Debian 1.6 $RELEASE"                # just name
 SOURCE_COMPILE="yes"                               # yes / no
 DEST_LANG="en_US.UTF-8"                            # sl_SI.UTF-8, en_US.UTF-8
 TZDATA="Europe/Ljubljana"                          # Timezone
@@ -25,8 +25,8 @@ set -e
 
 # optimize build time with 100% CPU usage
 CPUS=$(grep -c 'processor' /proc/cpuinfo)
-CTHREADS="-j$(($CPUS + $CPUS/2))"
-#CTHREADS="-j${CPUS}" # or not
+#CTHREADS="-j$(($CPUS + $CPUS/2))"
+CTHREADS="-j${CPUS}" # or not
 
 # to display build time at the end
 start=`date +%s`
@@ -44,7 +44,7 @@ echo "Building $VERSION."
 # Downloading necessary files
 #--------------------------------------------------------------------------------
 echo "Downloading necessary files."
-apt-get -qq -y install bc lzop zip binfmt-support bison build-essential ccache debootstrap flex gawk gcc-arm-linux-gnueabi gcc-arm-linux-gnueabihf lvm2 qemu-user-static u-boot-tools uuid-dev zlib1g-dev unzip libncurses5-dev pkg-config libusb-1.0-0-dev parted
+apt-get -y install lzop zip binfmt-support bison build-essential ccache debootstrap flex gawk gcc-arm-linux-gnueabi gcc-arm-linux-gnueabihf lvm2 qemu-user-static u-boot-tools uuid-dev zlib1g-dev unzip libncurses5-dev pkg-config libusb-1.0-0-dev parted
 
 #--------------------------------------------------------------------------------
 # Preparing output / destination files
@@ -60,19 +60,18 @@ else
    git clone https://github.com/SolidRun/u-boot-imx6 $DEST/u-boot-cubox 
 fi
 
-#if [ -d "$DEST/linux-cubox" ]
-#then
-#	cd $DEST/linux-cubox; git pull -f; cd $SRC
-#else
-#	git clone https://github.com/SolidRun/linux-imx6 $DEST/linux-cubox              # Stable kernel source
-#fi
+if [ -d "$DEST/linux-cubox" ]
+then
+	cd $DEST/linux-cubox; git pull -f; cd $SRC
+else
+	git clone https://github.com/SolidRun/linux-imx6 $DEST/linux-cubox              # Stable kernel source
+fi
 
 if [ -d "$DEST/linux-cubox-next" ]
 then
 	cd $DEST/linux-cubox-next; git pull -f; cd $SRC
 else
-	# git clone https://github.com/linux4kix/linux-linaro-stable-mx6 -b linux-linaro-lsk-v3.14-mx6 $DEST/linux-cubox-next # Dev kernel source
-          git clone https://github.com/SolidRun/linux-imx6-3.14 $DEST/linux-cubox-next
+	git clone https://github.com/linux4kix/linux-linaro-stable-mx6 -b linux-linaro-lsk-v3.14-mx6 $DEST/linux-cubox-next              # Dev kernel source
 fi
 
 if [ "$SOURCE_COMPILE" = "yes" ]; then
@@ -97,7 +96,7 @@ echo "------ Compiling universal boot loader"
 cd $DEST/u-boot-cubox
 make CROSS_COMPILE=arm-linux-gnueabihf- clean
 make $CTHREADS mx6_cubox-i_config CROSS_COMPILE=arm-linux-gnueabihf- 
-make $CTHREADS CROSS_COMPILE=arm-linux-gnueabihf-
+make $CTHREADS CROSS_COMPILE=arm-linux-gnueabihf- CONFIG_BOOTDELAY=0
 
 # kernel image
 #cd $DEST/linux-cubox
@@ -269,12 +268,14 @@ APT::Install-Recommends "0";
 APT::Install-Suggests "0";
 END
 
-# script to show boot splash
+# script to show boot splash and image
 cp $SRC/scripts/bootsplash $DEST/output/sdcard/etc/init.d/bootsplash
+cp $SRC/bin/bootsplash.png $DEST/output/sdcard/etc/bootsplash.png
+
 # make it executable
 chroot $DEST/output/sdcard /bin/bash -c "chmod +x /etc/init.d/bootsplash"
 # and startable on boot
-chroot $DEST/output/sdcard /bin/bash -c "update-rc.d bootsplash defaults" 
+# chroot $DEST/output/sdcard /bin/bash -c "update-rc.d bootsplash defaults" 
 
 # scripts for autoresize at first boot from cubian
 cd $DEST/output/sdcard/etc/init.d
@@ -302,7 +303,7 @@ chroot $DEST/output/sdcard /bin/bash -c "chmod +x /etc/init.d/cubian-*"
 # and startable on boot
 chroot $DEST/output/sdcard /bin/bash -c "update-rc.d cubian-firstrun defaults" 
 echo "Installing aditional applications"
-chroot $DEST/output/sdcard /bin/bash -c "apt-get -qq -y install i2c-tools bluetooth libbluetooth3 libbluetooth-dev stress u-boot-tools makedev libfuse2 libc6 libnl-3-dev sysfsutils hddtemp bc figlet toilet screen hdparm libfuse2 ntfs-3g bash-completion lsof sudo git hostapd dosfstools htop openssh-server ca-certificates module-init-tools dhcp3-client udev ifupdown iproute iputils-ping ntp rsync usbutils pciutils wireless-tools wpasupplicant procps parted cpufrequtils unzip bridge-utils"
+chroot $DEST/output/sdcard /bin/bash -c "apt-get -qq -y install fbi ir-keytable lirc rfkill lvm2 fbset less i2c-tools bluetooth libbluetooth3 libbluetooth-dev stress u-boot-tools makedev libfuse2 libc6 libnl-3-dev sysfsutils hddtemp bc figlet toilet screen hdparm libfuse2 ntfs-3g bash-completion lsof sudo git hostapd dosfstools htop openssh-server ca-certificates module-init-tools dhcp3-client udev ifupdown iproute iputils-ping ntp rsync usbutils pciutils wireless-tools wpasupplicant procps parted cpufrequtils unzip bridge-utils"
 # removed in 2.4 #chroot $DEST/output/sdcard /bin/bash -c "apt-get -qq -y install lirc alsa-utils console-setup console-data"
 chroot $DEST/output/sdcard /bin/bash -c "apt-get -y clean"
 
@@ -317,13 +318,13 @@ ZAMENJAJ=$ZAMENJAJ"\n   echo \"\" >> /var/run/motd.dynamic"
 sed -e s,"# Update motd","$ZAMENJAJ",g 	-i $DEST/output/sdcard/etc/init.d/motd
 sed -e s,"uname -snrvm > /var/run/motd.dynamic","",g  -i $DEST/output/sdcard/etc/init.d/motd
 
-# copy lirc configuration
-#cp $DEST/sunxi-lirc/lirc_init_files/hardware.conf $DEST/output/sdcard/etc/lirc
-#cp $DEST/sunxi-lirc/lirc_init_files/init.d_lirc $DEST/output/sdcard/etc/init.d/lirc
+# default lirc configuration
+sed -e 's/DEVICE=""/DEVICE="\/dev\/lirc0"/g' -i $DEST/output/sdcard/etc/lirc/hardware.conf
+sed -e 's/DRIVER="UNCONFIGURED"/DRIVER="default"/g' -i $DEST/output/sdcard/etc/lirc/hardware.conf
 
 # ramlog
 chroot $DEST/output/sdcard /bin/bash -c "dpkg -i /tmp/ramlog_2.0.0_all.deb"
-sed -e 's/TMPFS_RAMFS_SIZE=/TMPFS_RAMFS_SIZE=256m/g' -i $DEST/output/sdcard/etc/default/ramlog
+sed -e 's/TMPFS_RAMFS_SIZE=/TMPFS_RAMFS_SIZE=512m/g' -i $DEST/output/sdcard/etc/default/ramlog
 sed -e 's/# Required-Start:    $remote_fs $time/# Required-Start:    $remote_fs $time ramlog/g' -i $DEST/output/sdcard/etc/init.d/rsyslog 
 sed -e 's/# Required-Stop:     umountnfs $time/# Required-Stop:     umountnfs $time ramlog/g' -i $DEST/output/sdcard/etc/init.d/rsyslog   
 
@@ -338,6 +339,13 @@ chroot $DEST/output/sdcard /bin/bash -c "dpkg-reconfigure -f noninteractive tzda
 sed -e 's/MIN_SPEED="0"/MIN_SPEED="792000"/g' -i $DEST/output/sdcard/etc/init.d/cpufrequtils
 sed -e 's/MAX_SPEED="0"/MAX_SPEED="996000"/g' -i $DEST/output/sdcard/etc/init.d/cpufrequtils
 sed -e 's/ondemand/interactive/g' -i $DEST/output/sdcard/etc/init.d/cpufrequtils
+
+# kill bootsplash screen
+sed -e 's/exit 0//g' -i $DEST/output/sdcard/etc/rc.local
+cat >> $DEST/output/sdcard/etc/rc.local <<"EOF"
+kill $(pgrep fbi)
+exit 0
+EOF
 
 # set root password
 chroot $DEST/output/sdcard /bin/bash -c "(echo $ROOTPWD;echo $ROOTPWD;) | passwd root" 
@@ -381,7 +389,7 @@ cat <<EOT >> $DEST/output/sdcard/etc/network/interfaces
 auto eth0
 allow-hotplug eth0
 iface eth0 inet dhcp
-hwaddress ether # comment this if you want to have MAC from chip
+#hwaddress ether # comment this if you want to have MAC from chip
 #auto wlan0
 #allow-hotplug wlan0
 #iface wlan0 inet dhcp
