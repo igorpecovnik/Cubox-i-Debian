@@ -6,8 +6,9 @@
 #--------------------------------------------------------------------------------------------------------------------------------
 
 BOARD="cubox-i"							# bananapi, cubietruck, cubox-i, bananapi-next, cubietruck-next
+BRANCH="defaut"							# default=3.4.x, mainline=next
 RELEASE="wheezy"                                   		# jessie or wheezy
-VERSION="Cubox-i Debian 2.0 $RELEASE"               		# just name
+VERSION="Cubox-i Debian 2.1 $RELEASE"               		# just name
 SOURCE_COMPILE="yes"                               		# yes / no
 KERNEL_CONFIGURE="yes"						# do you want to change my default configuration
 DEST_LANG="en_US.UTF-8"                         	 	# sl_SI.UTF-8, en_US.UTF-8
@@ -24,6 +25,10 @@ FBTFT="no"							# Small TFT support, https://github.com/notro/fbtft
 if [ "$UID" -ne 0 ]
   then echo "Please run as root"
   exit
+fi
+
+if [ "$BRANCH" == "next" ]; then
+	BOARD=$BOARD"-"$BRANCH
 fi
 
 # source is where we start the script
