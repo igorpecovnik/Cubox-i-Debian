@@ -8,14 +8,14 @@
 BOARD="cubox-i"							# bananapi, cubietruck, cubox-i, bananapi-next, cubietruck-next
 BRANCH="defaut"							# default=3.4.x, mainline=next
 RELEASE="wheezy"                                   		# jessie or wheezy
-VERSION="Cubox-i Debian 2.1 $RELEASE"               		# just name
+VERSION="${BOARD^} Debian 2.1 $RELEASE"               		# just name
 SOURCE_COMPILE="yes"                               		# yes / no
 KERNEL_CONFIGURE="yes"						# do you want to change my default configuration
 DEST_LANG="en_US.UTF-8"                         	 	# sl_SI.UTF-8, en_US.UTF-8
 TZDATA="Europe/Ljubljana"                         		# Timezone
 DEST=$(pwd)/output                      		      	# Destination
 ROOTPWD="1234"                               		  	# Must be changed @first login
-HOST="cubox-i"						 	# Hostname
+HOST="$BOARD"						 	# Hostname
 USEALLCORES="no"						# Use all CPU cores for compiling
 SDSIZE="1000"							# SD image size in MB
 FBTFT="no"							# Small TFT support, https://github.com/notro/fbtft
