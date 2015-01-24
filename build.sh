@@ -6,7 +6,7 @@
 #--------------------------------------------------------------------------------------------------------------------------------
 
 BOARD="cubox-i"							# bananapi, cubietruck, cubox-i, bananapi-next, cubietruck-next
-BRANCH="defaut"							# default=3.4.x, mainline=next
+BRANCH="default"							# default=3.4.x, mainline=next
 RELEASE="wheezy"                                   		# jessie or wheezy
 
 # numbers
