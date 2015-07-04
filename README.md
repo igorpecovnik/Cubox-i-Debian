@@ -1,4 +1,4 @@
-# Cubieboard 2 and Cubietruck Debian #
+# Cubox-i and Hummingboard Debian #
 
 - [Build script](https://github.com/igorpecovnik/lib)
 - [Support](http://forum.armbian.com/)
